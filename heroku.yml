@@ -5,4 +5,4 @@ setup:
 
 build:
   docker: 
-    api: php/Dockerfile
+    back: php/Dockerfile
