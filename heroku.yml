@@ -5,4 +5,7 @@ setup:
 
 build:
   docker: 
-    back: php/Dockerfile
+    web: php/Dockerfile
+
+run:
+  web: symfony server:start
