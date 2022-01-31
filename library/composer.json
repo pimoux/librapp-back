@@ -11,6 +11,7 @@
         "composer/package-versions-deprecated": "1.11.99.4",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.5",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.10",
         "nelmio/cors-bundle": "^2.2",
@@ -46,7 +47,8 @@
         "symfony/web-link": "6.0.*",
         "symfony/yaml": "6.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "zenstruck/foundry": "^1.16"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -96,7 +98,8 @@
         },
         "post-install-cmd": [
             "@auto-scripts",
-            "php bin/console doctrine:schema:update --force"
+            "php bin/console doctrine:schema:update --force",
+            "php bin/console doctrine:fixtures:load --append"
         ],
         "post-update-cmd": [
             "@auto-scripts"
