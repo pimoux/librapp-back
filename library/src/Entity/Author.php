@@ -25,9 +25,14 @@ use Doctrine\ORM\Mapping as ORM;
         ]
         ],
     itemOperations: [
-        "get", 
-        "patch", 
-        "delete",
+        "GET" => [
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false,
+            'openapi_context' => [
+                "summary" => "hidden"
+            ]
+        ], 
         "book" => [
             "pagination_enabled" => false,
             "path" => "authors/{id}/books",

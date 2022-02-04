@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,7 +27,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
         ],
     ],
-    itemOperations: ["GET"]
+    itemOperations: [
+        "GET" => [
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false,
+            'openapi_context' => [
+                "summary" => "hidden"
+            ]
+        ], 
+        "PATCH"
+    ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

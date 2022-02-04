@@ -18,6 +18,14 @@ final class JwtDecorator implements OpenApiFactoryInterface
     public function __invoke(array $context = []): OpenApi
     {
         $openApi = ($this->decorated)($context);
+        /** @var Model\PathItem $path */
+        foreach($openApi->getPaths()->getPaths() as $key => $path) {
+            if ($path->getGet() && $path->getGet()->getSummary() === "hidden") {
+                $openApi->getPaths()->addPath($key, $path->withGet(null));
+            }
+        }
+
+
         $schemas = $openApi->getComponents()->getSchemas();
 
         $schemas['Token'] = new \ArrayObject([
