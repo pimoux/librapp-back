@@ -32,11 +32,11 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\AppAuthenticator
 
     access_control:
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing API documentations and Swagger UI
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
