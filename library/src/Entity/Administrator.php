@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
+use App\Repository\AdministratorRepository;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: AdministratorRepository::class)]
 #[ApiResource(
     collectionOperations: [
         "GET" => [
@@ -43,7 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ]
     ]
 )]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class Administrator implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

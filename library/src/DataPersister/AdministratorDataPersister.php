@@ -4,19 +4,20 @@ declare(strict_types=1);
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\User;
+use App\Entity\Administrator;
+use App\Entity\CurrentUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Class UserDataPersister
+ * Class AdministratorDataPersister
  * @package App\DataPersister
  */
-class UserDataPersister implements ContextAwareDataPersisterInterface
+class AdministratorDataPersister implements ContextAwareDataPersisterInterface
 {
 
     /**
-     * UserDataPersister constructor.
+     * AdministratorDataPersister constructor.
      * @param EntityManagerInterface $entityManager
      * @param UserPasswordHasherInterface $passwordHasher
      */
@@ -32,12 +33,12 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
      */
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User;
+        return $data instanceof Administrator;
     }
 
     /**
      * Hash user password when user is created with the api
-     * @param User $data
+     * @param Administrator $data
      * @param array $context
      * @return void
      */
