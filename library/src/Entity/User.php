@@ -36,7 +36,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "summary" => "hidden"
             ]
         ], 
-        "PATCH"
+        "PATCH" => [
+            "denormalization_context" => [
+                "groups" => ["edit:user"]
+            ]
+        ]
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -47,22 +51,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["write:user"])]
+    #[Groups(["write:user", "edit:user"])]
     private $email;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
-    #[Groups(["write:user"])]
+    #[Groups(["write:user", "edit:user"])]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["read:user:collection", "write:user"])]
+    #[Groups(["read:user:collection", "write:user", "edit:user"])]
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["read:user:collection", "write:user"])]
+    #[Groups(["read:user:collection", "write:user", "edit:user"])]
     private $lastname;
 
     public function getId(): ?int
