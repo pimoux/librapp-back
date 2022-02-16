@@ -17,7 +17,14 @@ use Doctrine\ORM\Mapping as ORM;
                 "groups" => ["read:book:collection"]
             ]
         ],
-        "POST"
+        "POST" => [
+            "denormalization_context" => [
+                "groups" => ["write:book"]
+            ],
+            "normalization_context" => [
+                "groups" => ["read:book:collection"]
+            ]
+        ]
     ],
     itemOperations: [
         "GET" => [
@@ -39,25 +46,27 @@ class Book
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['read:book:collection', "read:author:books"])]
+    #[Groups(['read:book:collection', "read:author:books", "write:book"])]
     private $title;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['read:book:collection'])]
+    #[Groups(['read:book:collection', "write:book"])]
     private $nbPages;
 
     #[ORM\Column(type: 'float')]
-    #[Groups(['read:book:collection'])]
+    #[Groups(['read:book:collection', "write:book"])]
     private $prix;
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
-    #[Groups(['read:book:collection'])]
+    #[Groups(['read:book:collection', "write:book"])]
     private $author;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['read:book:collection'])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['read:book:collection'])]
     private $updatedAt;
 
     public function __construct()
