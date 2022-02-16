@@ -4,12 +4,16 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\CreateBookWithCoverPageController;
 use App\Repository\BookRepository;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
+#[Vich\Uploadable]
 #[ApiResource(
     collectionOperations: [
         "GET" => [
@@ -34,6 +38,12 @@ use Doctrine\ORM\Mapping as ORM;
             'openapi_context' => [
                 "summary" => "hidden"
             ]
+        ],
+        'image' => [
+            'method' => 'POST',
+            'deserialize' => false,
+            'path' => '/books/{id}/image',
+            'controller' => CreateBookWithCoverPageController::class
         ]
     ]
 )]
@@ -68,6 +78,15 @@ class Book
     #[ORM\Column(type: 'datetime')]
     #[Groups(['read:book:collection'])]
     private $updatedAt;
+
+    /**
+     * @var File|null
+     */
+    #[Vich\UploadableField(mapping: 'cover_page', fileNameProperty: 'filePath')]
+    private $file;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $filePath;
 
     public function __construct()
     {
@@ -148,6 +167,30 @@ class Book
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): self
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->filePath;
+    }
+
+    public function setFile(?File $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

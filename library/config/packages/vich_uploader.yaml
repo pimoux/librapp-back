@@ -1,0 +1,8 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        cover_page:
+            uri_prefix: /images/coverPages
+            upload_destination: '%kernel.project_dir%/public/images/coverPages'
+            namer: Vich\UploaderBundle\Naming\OrignameNamer
