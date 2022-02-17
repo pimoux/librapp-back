@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\CreateBookWithCoverPageController;
-use App\Controller\GetBookCoverPageController;
 use App\Repository\BookRepository;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -44,6 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             'method' => 'POST',
             'deserialize' => false,
             'path' => '/books/{id}/image',
+            "requirements" => ["id" => "\d+"],
             'controller' => CreateBookWithCoverPageController::class,
             "normalization_context" => [
                 "groups" => ["read:book:collection"]
@@ -115,8 +115,13 @@ class Book
     private $file;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['read:book:collection'])]
     private $filePath;
+
+    /**
+     * @var string|null
+     */
+    #[Groups(['read:book:collection'])]
+    private $fileUrl;
 
     public function __construct()
     {
@@ -201,6 +206,21 @@ class Book
         return $this;
     }
 
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file): self
+    {
+        $this->file = $file;
+        if ($file !== null) {
+            $this->setUpdatedAt(new DateTime());
+        }
+
+        return $this;
+    }
+
     public function getFilePath(): ?string
     {
         return $this->filePath;
@@ -213,17 +233,14 @@ class Book
         return $this;
     }
 
-    public function getFile(): ?File
+    public function getFileUrl(): ?string
     {
-        return $this->file;
+        return $this->fileUrl;
     }
 
-    public function setFile(?File $file): self
+    public function setFileUrl(?string $fileUrl): self
     {
-        $this->file = $file;
-        if ($file !== null) {
-            $this->setUpdatedAt(new DateTime());
-        }
+        $this->fileUrl = $fileUrl;
 
         return $this;
     }
