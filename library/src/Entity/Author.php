@@ -23,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
                 "groups" => ["write:author"]
             ],
         ]
-        ],
+    ],
     itemOperations: [
         "GET" => [
             'controller' => NotFoundAction::class,
@@ -32,7 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
             'openapi_context' => [
                 "summary" => "hidden"
             ]
-        ], 
+        ],
         "book" => [
             "pagination_enabled" => false,
             "path" => "authors/{id}/books",
@@ -43,6 +43,11 @@ use Doctrine\ORM\Mapping as ORM;
             "normalization_context" => [
                 "groups" => ["read:author:books"]
             ]
+        ]
+    ],
+    attributes: [
+        'order' => [
+            'lastname' => 'ASC'
         ]
     ]
 )]
@@ -153,7 +158,6 @@ class Author
     public function removeBook(Book $book): self
     {
         if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
             if ($book->getAuthor() === $this) {
                 $book->setAuthor(null);
             }

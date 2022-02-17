@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\CreateBookWithCoverPageController;
+use App\Controller\GetBookCoverPageController;
 use App\Repository\BookRepository;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -38,6 +39,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                 "summary" => "hidden"
             ]
         ],
+        'DELETE',
         'image' => [
             'method' => 'POST',
             'deserialize' => false,
@@ -63,6 +65,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                     ]
                 ]
             ]
+        ]
+    ],
+    attributes: [
+        'order' => [
+            'title' => 'ASC'
         ]
     ]
 )]
