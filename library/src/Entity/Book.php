@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-#[Vich\Uploadable]
 #[ApiResource(
     collectionOperations: [
         "GET" => [
@@ -43,10 +42,33 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             'method' => 'POST',
             'deserialize' => false,
             'path' => '/books/{id}/image',
-            'controller' => CreateBookWithCoverPageController::class
+            'controller' => CreateBookWithCoverPageController::class,
+            "normalization_context" => [
+                "groups" => ["read:book:collection"]
+            ],
+            'openapi_context' => [
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ]
     ]
 )]
+/**
+ * @Vich\Uploadable
+ */
 class Book
 {
     #[ORM\Id]
@@ -81,11 +103,12 @@ class Book
 
     /**
      * @var File|null
+     * @Vich\UploadableField(mapping="cover_page", fileNameProperty="filePath")
      */
-    #[Vich\UploadableField(mapping: 'cover_page', fileNameProperty: 'filePath')]
     private $file;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['read:book:collection'])]
     private $filePath;
 
     public function __construct()
@@ -185,12 +208,15 @@ class Book
 
     public function getFile(): ?File
     {
-        return $this->filePath;
+        return $this->file;
     }
 
     public function setFile(?File $file): self
     {
         $this->file = $file;
+        if ($file !== null) {
+            $this->setUpdatedAt(new DateTime());
+        }
 
         return $this;
     }

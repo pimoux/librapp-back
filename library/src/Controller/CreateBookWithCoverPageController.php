@@ -3,19 +3,22 @@
 namespace App\Controller;
 
 use App\Entity\Book;
-use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class CreateBookWithCoverPageController
+final class CreateBookWithCoverPageController extends AbstractController
 {
-    public function __invoke(Request $request, Book $book)
+    public function __invoke(Request $request): Book
     {
-        $book = $request->attributes->get('data');
-        if (!($book instanceof Book)) {
-            throw new RuntimeException('Livre attendu');
+        $uploadedFile = $request->files->get('file');
+        if (!$uploadedFile) {
+            throw new BadRequestHttpException('"file" is required');
         }
-        // $book->setFile($request->files->get('file'));
-        // $book->setUpdatedAt(new \DateTime());
+
+        $book = $request->attributes->get('data');
+        $book->setFile($uploadedFile);
+
         return $book;
     }
 }
