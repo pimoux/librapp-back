@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 #[ApiResource(
@@ -112,6 +113,10 @@ class Book
      * @var File|null
      * @Vich\UploadableField(mapping="cover_page", fileNameProperty="filePath")
      */
+    #[Assert\File(
+        mimeTypes: ['image/jpeg', 'image/jpg', 'image/png'],
+        mimeTypesMessage: 'Please upload an image with a valid format',
+    )]
     private $file;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
