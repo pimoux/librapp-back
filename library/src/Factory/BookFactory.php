@@ -45,7 +45,7 @@ final class BookFactory extends ModelFactory
             'title' => self::faker()->unique()->jobTitle(),
             'nbPages' => self::faker()->randomNumber(3, true),
             'prix' => self::faker()->randomFloat(2, 6, 50),
-            'author' => $authors[self::faker()->numberBetween(1, count($authors) - 1)]
+            'author' => $authors[self::faker()->numberBetween(0, count($authors) - 1)]
         ];
     }
 

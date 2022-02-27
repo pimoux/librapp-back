@@ -36,15 +36,4 @@ class AuthenticationTest extends ApiTestCase
             'message' => "Invalid credentials."
         ]);
     }
-
-    public function testTokenNotFound()
-    {
-        self::createClient()->request('GET', '/api/books');
-
-        $this->assertResponseStatusCodeSame(401);
-        $this->assertJsonContains([
-            'code' => 401,
-            'message' => "JWT Token not found"
-        ]);
-    }
 }
