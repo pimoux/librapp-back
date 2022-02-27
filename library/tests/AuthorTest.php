@@ -8,7 +8,9 @@ use App\Entity\Author;
 class AuthorTest extends ApiTestCase
 {
     const AUTHOR_DATA = ["firstname" => "Jean", "lastname" => "Pierre", "datns" => "2022-01-07T23:30:39+00:00", "location" => "NY"];
-    public function testAdminGetAuthors() {
+
+    public function testAdminGetAuthors()
+    {
         $login = AuthenticationTest::login('123456');
         $token = $login->toArray()['token'];
 
@@ -30,7 +32,8 @@ class AuthorTest extends ApiTestCase
         $this->assertMatchesResourceCollectionJsonSchema(Author::class);
     }
 
-    public function testAnonymousGetAuthors() {
+    public function testAnonymousGetAuthors()
+    {
         self::createClient()->request('GET', '/api/authors', [
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -44,7 +47,8 @@ class AuthorTest extends ApiTestCase
         ]);
     }
 
-    public function testAdminCreateAuthor() {
+    public function testAdminCreateAuthor()
+    {
         $login = AuthenticationTest::login('123456');
         $token = $login->toArray()['token'];
 
@@ -59,18 +63,19 @@ class AuthorTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
-                "@context" => "/api/contexts/Author",
-                "@type" => "Author",
-                "firstname" => "Jean",
-                "lastname" => "Pierre",
-                "datns" => "2022-01-07T23:30:39+00:00",
-                "location" => "NY"
+            "@context" => "/api/contexts/Author",
+            "@type" => "Author",
+            "firstname" => "Jean",
+            "lastname" => "Pierre",
+            "datns" => "2022-01-07T23:30:39+00:00",
+            "location" => "NY"
         ]);
         $this->assertMatchesRegularExpression('~^/api/authors/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Author::class);
     }
 
-    public function testAnonymousCreateAuthor() {
+    public function testAnonymousCreateAuthor()
+    {
         self::createClient()->request('POST', '/api/authors', [
             'json' => self::AUTHOR_DATA,
             'headers' => [
@@ -85,7 +90,8 @@ class AuthorTest extends ApiTestCase
         ]);
     }
 
-    public function testAdminGetAuthorBooks() {
+    public function testAdminGetAuthorBooks()
+    {
         $login = AuthenticationTest::login('123456');
         $token = $login->toArray()['token'];
 
@@ -108,7 +114,8 @@ class AuthorTest extends ApiTestCase
         $this->assertMatchesResourceCollectionJsonSchema(Author::class);
     }
 
-    public function testAnonymousGetAuthorBooks() {
+    public function testAnonymousGetAuthorBooks()
+    {
         self::createClient()->request('GET', '/api/authors/1/books', [
             'headers' => [
                 'Content-Type' => 'application/json',
