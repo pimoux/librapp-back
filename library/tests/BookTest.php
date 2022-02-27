@@ -8,6 +8,7 @@ use App\Entity\Author;
 class BookTest extends ApiTestCase
 {
     const BOOK_DATA = ["title" => "50 nuances d'algos", "nbPages" => 276, "prix" => 19.99, "author" => "/api/authors/1"];
+    const INVALID_BOOK_DATA = ["title" => "50 nuances d'algos", "nbPages" => 276, "prix" => 19.99, "author" => 1];
 
     public function testAdminGetBooks()
     {
@@ -77,6 +78,29 @@ class BookTest extends ApiTestCase
         $this->assertMatchesRegularExpression('~^/api/authors/\d+$~', $response->toArray()['author']['@id']);
         $this->assertMatchesRegularExpression('~^/api/books/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Author::class);
+    }
+
+    public function testAdminCreateInvalidBook()
+    {
+        $login = AuthenticationTest::login('123456');
+        $token = $login->toArray()['token'];
+
+        self::createClient()->request('POST', '/api/books', [
+            'json' => self::INVALID_BOOK_DATA,
+            'headers' => [
+                'Content-Type' => 'application/ld+json',
+                'Authorization' => 'bearer ' . $token
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertJsonContains([
+            "@context" => "/api/contexts/Error",
+            "@type" => "hydra:Error",
+            "hydra:title" => "An error occurred",
+            "hydra:description" => "Expected IRI or nested document for attribute \"author\", \"integer\" given."
+        ]);
     }
 
     public function testAnonymousCreateBook()

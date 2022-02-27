@@ -65,6 +65,34 @@ class PostCoverPageTest extends ApiTestCase
         ]);
     }
 
+    public function testAdminPublishCoverPageForNotFoundBook()
+    {
+        $file = new UploadedFile(__DIR__ . '/images/profileNotFound.jpeg', 'profileNotFound.jpeg', 'image/jpeg');
+        $login = AuthenticationTest::login('123456');
+        $token = $login->toArray()['token'];
+
+        $response = self::createClient()->request('POST', '/api/books/1000/image', [
+            'headers' => [
+                'Content-Type' => 'multipart/form-data',
+                'Authorization' => 'bearer ' . $token
+            ],
+            'extra' => [
+                'files' => [
+                    'file' => $file
+                ]
+            ]
+        ]);
+
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonContains([
+            "@context" => "/api/contexts/Error",
+            "@type" => "hydra:Error",
+            "hydra:title" => "An error occurred",
+            "hydra:description" => "Not Found"
+        ]);
+    }
+
     public function testAnonymousPublishCoverPage()
     {
         $file = new UploadedFile(__DIR__ . '/images/profileAnonymous.jpeg', 'profileAnonymous.jpeg', 'image/jpeg');

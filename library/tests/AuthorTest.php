@@ -8,6 +8,7 @@ use App\Entity\Author;
 class AuthorTest extends ApiTestCase
 {
     const AUTHOR_DATA = ["firstname" => "Jean", "lastname" => "Pierre", "datns" => "2022-01-07T23:30:39+00:00", "location" => "NY"];
+    const INVALID_AUTHOR_DATA = ["firstname" => "Jean", "lastname" => "Pierre", "datns" => 12, "location" => "NY"];
 
     public function testAdminGetAuthors()
     {
@@ -72,6 +73,29 @@ class AuthorTest extends ApiTestCase
         ]);
         $this->assertMatchesRegularExpression('~^/api/authors/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Author::class);
+    }
+
+    public function testAdminCreateInvalidAuthor()
+    {
+        $login = AuthenticationTest::login('123456');
+        $token = $login->toArray()['token'];
+
+        self::createClient()->request('POST', '/api/authors', [
+            'json' => self::INVALID_AUTHOR_DATA,
+            'headers' => [
+                'Content-Type' => 'application/ld+json',
+                'Authorization' => 'bearer ' . $token
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertJsonContains([
+            "@context" => "/api/contexts/Error",
+            "@type" => "hydra:Error",
+            "hydra:title" => "An error occurred",
+            "hydra:description" => "Failed to parse time string (12) at position 0 (1): Unexpected character"
+        ]);
     }
 
     public function testAnonymousCreateAuthor()
