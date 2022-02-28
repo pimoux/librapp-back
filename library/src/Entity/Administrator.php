@@ -19,14 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
                 "groups" => ["read:user:collection"]
             ]
         ],
-        "POST" => [
-            "normalization_context" => [
-                "groups" => ["read:user:collection"]
-            ],
-            "denormalization_context" => [
-                "groups" => ["write:user"]
-            ],
-        ],
     ],
     itemOperations: [
         "GET" => [
@@ -49,7 +41,7 @@ class Administrator implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["write:user", "edit:user"])]
+    #[Groups(["edit:user"])]
     #[Assert\Email(message: "You must enter a valid email")]
     private $email;
 
@@ -57,15 +49,15 @@ class Administrator implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
-    #[Groups(["write:user", "edit:user"])]
+    #[Groups(["edit:user"])]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["read:user:collection", "write:user", "edit:user"])]
+    #[Groups(["read:user:collection", "edit:user"])]
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["read:user:collection", "write:user", "edit:user"])]
+    #[Groups(["read:user:collection", "edit:user"])]
     private $lastname;
 
     public function getId(): ?int
