@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Author;
+use App\Tests\Manager\RequestManager;
 
 class AuthorTest extends ApiTestCase
 {
@@ -12,15 +13,8 @@ class AuthorTest extends ApiTestCase
 
     public function testAdminGetAuthors()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
+        $response = RequestManager::getRequest('/api/authors');
 
-        $response = self::createClient()->request('GET', '/api/authors', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
@@ -35,11 +29,7 @@ class AuthorTest extends ApiTestCase
 
     public function testAnonymousGetAuthors()
     {
-        self::createClient()->request('GET', '/api/authors', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        RequestManager::getRequest('/api/authors', false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([
@@ -50,16 +40,7 @@ class AuthorTest extends ApiTestCase
 
     public function testAdminCreateAuthor()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
-
-        $response = self::createClient()->request('POST', '/api/authors', [
-            'json' => self::AUTHOR_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
+        $response = RequestManager::postRequest('/api/authors', self::AUTHOR_DATA);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -77,16 +58,7 @@ class AuthorTest extends ApiTestCase
 
     public function testAdminCreateInvalidAuthor()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
-
-        self::createClient()->request('POST', '/api/authors', [
-            'json' => self::INVALID_AUTHOR_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
+        RequestManager::postRequest('/api/authors', self::INVALID_AUTHOR_DATA);
 
         $this->assertResponseStatusCodeSame(400);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -100,12 +72,7 @@ class AuthorTest extends ApiTestCase
 
     public function testAnonymousCreateAuthor()
     {
-        self::createClient()->request('POST', '/api/authors', [
-            'json' => self::AUTHOR_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json'
-            ],
-        ]);
+        RequestManager::postRequest('/api/authors', self::AUTHOR_DATA, false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([
@@ -116,15 +83,8 @@ class AuthorTest extends ApiTestCase
 
     public function testAdminGetAuthorBooks()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
+        RequestManager::getRequest('/api/authors/1/books');
 
-        $response = self::createClient()->request('GET', '/api/authors/1/books', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
@@ -140,11 +100,7 @@ class AuthorTest extends ApiTestCase
 
     public function testAnonymousGetAuthorBooks()
     {
-        self::createClient()->request('GET', '/api/authors/1/books', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        RequestManager::getRequest('/api/authors/1/books', false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([

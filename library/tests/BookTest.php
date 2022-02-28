@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Author;
+use App\Tests\Manager\RequestManager;
 
 class BookTest extends ApiTestCase
 {
@@ -12,15 +13,8 @@ class BookTest extends ApiTestCase
 
     public function testAdminGetBooks()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
-
-        $response = self::createClient()->request('GET', '/api/books', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
+        $response = RequestManager::getRequest('/api/books');
+    
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
@@ -35,11 +29,7 @@ class BookTest extends ApiTestCase
 
     public function testAnonymousGetBooks()
     {
-        self::createClient()->request('GET', '/api/books', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        RequestManager::getRequest('/api/books', false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([
@@ -50,16 +40,7 @@ class BookTest extends ApiTestCase
 
     public function testAdminCreateBook()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
-
-        $response = self::createClient()->request('POST', '/api/books', [
-            'json' => self::BOOK_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
+        $response = RequestManager::postRequest('/api/books', self::BOOK_DATA);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -82,16 +63,7 @@ class BookTest extends ApiTestCase
 
     public function testAdminCreateInvalidBook()
     {
-        $login = AuthenticationTest::login('123456');
-        $token = $login->toArray()['token'];
-
-        self::createClient()->request('POST', '/api/books', [
-            'json' => self::INVALID_BOOK_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json',
-                'Authorization' => 'bearer ' . $token
-            ],
-        ]);
+        RequestManager::postRequest('/api/books', self::INVALID_BOOK_DATA);
 
         $this->assertResponseStatusCodeSame(400);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -105,12 +77,7 @@ class BookTest extends ApiTestCase
 
     public function testAnonymousCreateBook()
     {
-        self::createClient()->request('POST', '/api/books', [
-            'json' => self::BOOK_DATA,
-            'headers' => [
-                'Content-Type' => 'application/ld+json'
-            ],
-        ]);
+        RequestManager::postRequest('/api/books', self::BOOK_DATA, false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([

@@ -13,6 +13,7 @@ class BookFixtures extends Fixture
     public function __construct(private AuthorRepository $authorRepository)
     {
     }
+
     public function load(ObjectManager $manager): void
     {
         $book = new Book();
