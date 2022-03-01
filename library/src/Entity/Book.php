@@ -114,6 +114,7 @@ class Book
      * @Vich\UploadableField(mapping="cover_page", fileNameProperty="filePath")
      */
     #[Assert\File(
+        maxSize: '2Mi',
         mimeTypes: ['image/jpeg', 'image/jpg', 'image/png'],
         mimeTypesMessage: 'Please upload an image with a valid format',
     )]

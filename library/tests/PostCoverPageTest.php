@@ -55,10 +55,25 @@ class PostCoverPageTest extends ApiTestCase
         ]);
     }
 
+    public function testAdminPublishTooLargeCoverPage()
+    {
+        $file = new UploadedFile(__DIR__ . '/images/tooLarge.jpg', 'tooLarge.jpg', 'image/jpg');
+        RequestManager::postFile('/api/books/3/image', $file);
+
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains([
+            "@context" => "/api/contexts/ConstraintViolationList",
+            "@type" => "ConstraintViolationList",
+            "hydra:title" => "An error occurred",
+            "hydra:description" => "file: The file is too large (2.48 MiB). Allowed maximum size is 2 MiB.",
+        ]);
+    }
+
     public function testAnonymousPublishCoverPage()
     {
         $file = new UploadedFile(__DIR__ . '/images/profileAnonymous.jpeg', 'profileAnonymous.jpeg', 'image/jpeg');
-        RequestManager::postFile('/api/books/3/image', $file, false);
+        RequestManager::postFile('/api/books/4/image', $file, false);
 
         $this->assertResponseStatusCodeSame(401);
         $this->assertJsonContains([

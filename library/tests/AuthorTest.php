@@ -98,6 +98,20 @@ class AuthorTest extends ApiTestCase
         $this->assertMatchesResourceCollectionJsonSchema(Author::class);
     }
 
+    public function testAdminGetNotFoundAuthorBooks()
+    {
+        RequestManager::getRequest('/api/authors/1000/books');
+
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonContains([
+            "@context" => "/api/contexts/Error",
+            "@type" => "hydra:Error",
+            "hydra:title" => "An error occurred",
+            "hydra:description" => "App\Entity\Author object not found by the @ParamConverter annotation.",
+        ]);
+    }
+
     public function testAnonymousGetAuthorBooks()
     {
         RequestManager::getRequest('/api/authors/1/books', false);
