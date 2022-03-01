@@ -25,4 +25,5 @@
 
 ###> image files ###
 /public/images
+/tests/images/tooLarge.jpg
 ###< image files ###
