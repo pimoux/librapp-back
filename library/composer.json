@@ -94,6 +94,7 @@
         "symfony/polyfill-php80": "*"
     },
     "scripts": {
+        "removeImages": "rm public/images/coverPages/*",
         "start": "php -S 127.0.0.1:8000 -t public",
         "fixture": [
             "php bin/console doctrine:database:drop --force",

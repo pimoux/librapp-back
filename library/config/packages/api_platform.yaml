@@ -4,6 +4,7 @@ api_platform:
         paths: ['%kernel.project_dir%/src/Entity']
     formats:
         jsonld: ['application/ld+json']
+        json: ['application/json']
         html: ['text/html']
         multipart: ['multipart/form-data']
     patch_formats:
